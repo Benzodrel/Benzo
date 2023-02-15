@@ -1,20 +1,20 @@
 <?php
 
-function isClosedStack($bra):bool {
+function isClosedStack($bracket): bool
+{
     $stack = [];
-    $initSym = ['[', '(', '{'];
+    $initSymbol = ['[', '(', '{'];
     $completeSym = ['[]', '()', "{}"];
 
-    for ($i = 0; $i < strlen($bra); $i++) {
-        $b = $bra[$i];
-        if (in_array($b, $initSym)) {
-            array_push($stack, $b);
+    for ($i = 0; $i < strlen($bracket); $i++) {
+        $current = $bracket[$i];
+        if (in_array($current, $initSymbol)) {
+            array_push($stack, $current);
         } else {
-            $a = array_pop($stack);
-            $match = "$a$b";
+            $prev = array_pop($stack);
+            $match = "$prev$current";
             if (!in_array($match, $completeSym)) return false;
         }
-    }return true;
+    }
+    return count($stack) === 0;
 }
-echo "FUNCTION STACK RESULT:";
-var_dump(isClosedStack($_GET["name"]));

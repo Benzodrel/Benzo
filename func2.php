@@ -1,29 +1,18 @@
 <?php
 
-function isClosed1($bra) :string|bool
+function isClosed1($bracket): bool
 {
-
-    if (strlen($bra) % 2 != 0) {
-        echo "false";
+    if (strlen($bracket) % 2 != 0) {
         return false;
     }
-    $a = strlen($bra)/2;
-    while ($a>0) {
-        $bra = preg_replace('/{}/', '', $bra);
-        //if ($bra == '')return true;
-        $bra = preg_replace('/\(\)/', '', $bra);
-        $bra = preg_replace('/\[]/', '', $bra);
+    $a = strlen($bracket) / 2;
+    while ($a > 0) {
+        $bracket = str_replace('{}', '', $bracket);
+        $bracket = str_replace('()', '', $bracket);
+        $bracket = str_replace('[]', '', $bracket);
         $a--;
     }
-if ($bra == '') return true;
-return false;
-
-
+    if ($bracket === '') return true;
+    return false;
 }
-if (($_GET['name']!="")) {
-    echo "STR CHANGE RESULT FUNCTION";
-    var_dump(isClosed1($_GET['name']));
-    include_once "func3.php";
-}
-
    
