@@ -8,7 +8,6 @@ if ($argc!=3) {
     echo "Wrong number of Arguments";
 }else {
     if (ctype_digit($argv[1]) && ctype_digit($argv[2]) && $argv[1] != 0 && $argv[2] != 0 && $argv[1] < 100 && $argv[2] < 100) {
-
         if (is_writable(__DIR__ . '/Test_cases.txt') === false && file_exists(__DIR__ . '/Test_cases.txt') === true) {
             echo "Read/create file ERROR";
         } else {
@@ -37,6 +36,7 @@ if ($argc!=3) {
             }
             fclose($file);
         }
+
     } else {
         echo 'ERROR: Please input correct int numbers from 1 to 99';
     }
