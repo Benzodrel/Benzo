@@ -15,9 +15,7 @@ if ($argc!=3) {
             $count = $argv[1];
             $randmax = $argv[2];
 
-            if (inFile($count, $randmax) === false) {
-                echo "File recording ERROR";
-            } else {
+            inFile($count, $randmax); 
 
                 $str = '';
                 while (!feof($file)) {
@@ -33,7 +31,7 @@ if ($argc!=3) {
                         echo $str . " - " . "Test Failed\n";
                     }
                 }
-            }
+            
             fclose($file);
         }
 
