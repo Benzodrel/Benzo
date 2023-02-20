@@ -8,10 +8,11 @@ if ($argc!=3) {
     echo "Wrong number of Arguments";
 }else {
     if (ctype_digit($argv[1]) && ctype_digit($argv[2]) && $argv[1] != 0 && $argv[2] != 0 && $argv[1] < 100 && $argv[2] < 100) {
-        $file = fopen(__DIR__ . '/Test_cases.txt', 'w+');
-        if ($file === false) {
+
+        if (fopen(__DIR__ . '/Test_cases.txt', 'w+') === false) {
             echo "Read/create file ERROR";
         } else {
+            $file = fopen(__DIR__ . '/Test_cases.txt', 'w+');
             $count = $argv[1];
             $randmax = $argv[2];
 
@@ -34,8 +35,9 @@ if ($argc!=3) {
                     }
                 }
             }
+            fclose($file);
         }
-        fclose($file);
+
     } else {
         echo 'ERROR: Please input correct int numbers from 1 to 99';
     }
