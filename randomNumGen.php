@@ -1,5 +1,5 @@
 <?php
-function randomStr($len = 5): string
+function randomStr(int $len): string
 {
     $baseSymbols = "{}()[]";
     $gen_str = '';

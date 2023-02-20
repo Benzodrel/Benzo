@@ -1,6 +1,6 @@
 <?php
 
-function isClosed1($bracket): bool
+function isClosed1(string $bracket): bool
 {
     if (strlen($bracket) % 2 != 0) {
         return false;
@@ -12,7 +12,7 @@ function isClosed1($bracket): bool
         $bracket = str_replace('[]', '', $bracket);
         $a--;
     }
-    if ($bracket === '') return true;
-    return false;
+    return $bracket === '';
+
 }
    

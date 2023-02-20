@@ -1,10 +1,10 @@
 <?php
 
-function isClosedStack($bracket): bool
+function isClosedStack(string $bracket): bool
 {
     $stack = [];
     $initSymbol = ['[', '(', '{'];
-    $completeSym = ['[]', '()', "{}"];
+    $completeSym = ['[]', '()', '{}'];
 
     for ($i = 0; $i < strlen($bracket); $i++) {
         $current = $bracket[$i];
