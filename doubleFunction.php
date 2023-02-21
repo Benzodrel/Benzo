@@ -29,6 +29,9 @@ $count = $argv[1];
 $randmax = $argv[2];
 
 
+inFile($count, $randmax);
+
+
 $str = '';
 while (!feof($file)) {
     $str = trim((fgets($file)), "\r\n");
