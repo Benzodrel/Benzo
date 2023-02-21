@@ -28,7 +28,6 @@ if ($file === false) {
 $count = $argv[1];
 $randmax = $argv[2];
 
-inFile($count, $randmax);
 
 $str = '';
 while (!feof($file)) {
