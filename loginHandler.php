@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (isset($_POST['Login']) === true) {
+if (!empty($_POST['Login']) === true) {
     if (!file_exists("users/{$_POST["Login"]}.txt")) {
         $_SESSION['error'] = 'Пользователь с таким именем отсутствует';
         header('Location: login.php');
@@ -14,6 +14,9 @@ if (isset($_POST['Login']) === true) {
     } else {
         $_SESSION['error'] = "Неверный пароль";
         header('Location: login.php');
+    }
+    if ($_POST['rememberMe']) {
+        setcookie('logged', $_POST['Login'], time() + 3600 * 24 * 7);
     }
 
 }

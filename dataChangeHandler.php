@@ -7,6 +7,22 @@ if (!file_exists("users/{$_SESSION['logged']}.txt")) {
     die();
 }
 if (!empty($_POST['userEmail'])) {
+    function isEmailExists() {
+        if (glob("users/*.txt") === false) {
+            return false;
+        }
+        foreach (glob("users/*.txt")as $file) {
+            if (rtrim(file($file)[3], "\n") ===  $_POST['userEmail']) {
+                return true;
+            }
+        }
+        return false;
+    }
+    if (isEmailExists()) {
+        $_SESSION['error'] = "Another user already have this E-mail";
+        header('Location: dataChange.php');
+        die();
+    }
     if (filter_var($_POST["userEmail"], FILTER_VALIDATE_EMAIL) === false) {
         $_SESSION['error'] = "Enter correct E-mail";
         header('Location: dataChange.php');
@@ -19,7 +35,7 @@ if (!empty($_POST['userEmail'])) {
 
 if (is_uploaded_file($_FILES['avatar']['tmp_name'])) {
     if ($_FILES['avatar']['size'] >= '10000') {
-        $_SESSION['error'] = "Avatar's size must less than 10 MB";
+        $_SESSION['error'] = "Avatar's size must less than 10 KB";
         header('Location: dataChange.php');
         die();
     }
