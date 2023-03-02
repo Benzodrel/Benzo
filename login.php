@@ -9,20 +9,12 @@ if (isset($_SESSION['logged'])) {
     header('Location: index.php');
     die();
 }
+$header = 'Страница входа';
+require_once "headerTemplate.php";
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Страница регистрации</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-</head>
 <body>
 <header>
-
-</header>
+</header>"
 <main>
     <section class="text-center">
         <h1>Страница входа</h1>
@@ -37,9 +29,13 @@ if (isset($_SESSION['logged'])) {
         </form>
         <p><a href="register.php">Регистрация</a></p>
         <?php
-        if (isset($_SESSION['error'])) {
-            echo "<p> {$_SESSION['error']} </p>";
-            unset($_SESSION['error']);
+        if (isset($_SESSION['message'])) {
+            echo "<p class='text-success'> {$_SESSION['message']} </p>";
+            unset($_SESSION['message']);
+        }
+        if (isset($_SESSION['error']['enter'])) {
+            echo "<p class='text-danger'> {$_SESSION['error']['enter']} </p>";
+            unset($_SESSION['error']['enter']);
         }
         ?>
     </section>

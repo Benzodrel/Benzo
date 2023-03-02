@@ -4,17 +4,9 @@ if (!isset($_SESSION['logged'])) {
     header('Location: login.php');
     die();
 }
+$header = 'Страница пользователя';
+require_once "headerTemplate.php";
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Страница пользователя</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-</head>
 <body>
 <header>
 </header>
@@ -31,30 +23,30 @@ if (!isset($_SESSION['logged'])) {
     }
     ?>
     >
-    <p>Your Name:<?= file("users/{$_SESSION['logged']}.txt")[1] ?></p>
-    <p>Your Surname:<?= file("users/{$_SESSION['logged']}.txt")[2] ?></p>
-    <p>Your E-mail:<?= file("users/{$_SESSION['logged']}.txt")[3] ?></p>
+    <p>Your Name:<?= json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true)['Name'] ?></p>
+    <p>Your Surname:<?= json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true)['Surname'] ?></p>
+    <p>Your E-mail:<?= json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true)['Email'] ?></p>
     <p><a href="dataChange.php">Изменить личные данные</a></p>
     <form action="logout.php" method="post">
         <button type="submit" class = "btn btn-primary">Logout</button>
     </form>
     <?php
-    if (isset($_SESSION['error'])) {
-        echo "<p>{$_SESSION['error']}</p>";
-        unset($_SESSION['error']);
+    if (isset($_SESSION['message'])) {
+        echo "<p class='text-success'>{$_SESSION['message']}</p>";
+        unset($_SESSION['message']);
     }
     ?>
     </div>
     <div class = "col">
     <h2>Остальные пользователи</h2>
     <?php
-    if (count(glob('users/*.txt')) <= 1) {
+    if (count(glob('users/*.json')) <= 1) {
         echo "Нет других пользователей";
         die();
     }
-    foreach (glob('users/*.txt') as $i) {
-        if (ltrim(rtrim($i, '.txt'), 'users/') !== $_SESSION['logged']) {
-            echo ltrim(rtrim($i, '.txt'), 'users/') . '<br>';
+    foreach (glob('users/*.json') as $i) {
+        if (ltrim(rtrim($i, '.json'), 'users/') !== $_SESSION['logged']) {
+            echo ltrim(rtrim($i, '.json'), 'users/') . '<br>';
         }
     }
     ?>

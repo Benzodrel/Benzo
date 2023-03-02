@@ -1,18 +1,22 @@
 <?php
 session_start();
-
+$login = $_POST["Login"];
+$loginPassword = $_POST['userPassword'];
 if (!empty($_POST['Login']) === true) {
-    if (!file_exists("users/{$_POST["Login"]}.txt")) {
-        $_SESSION['error'] = 'Пользователь с таким именем отсутствует';
+    if (!file_exists("users/{$login}.json")) {
+        $_SESSION['error']['enter'] = 'Пользователь с таким именем отсутствует';
         header('Location: login.php');
         die();
     }
-    $password = file("users/{$_POST["Login"]}.txt");
-    if ($password[4] === md5($_POST['userPassword'])) {
+$json = json_decode(file_get_contents("users/{$login}.json"), true);
+
+    $password = $json['Password'];
+
+    if ($password === md5($loginPassword)) {
         $_SESSION['logged'] = $_POST['Login'];
         header('Location: index.php');
     } else {
-        $_SESSION['error'] = "Неверный пароль";
+        $_SESSION['error']['enter'] = "Неверный пароль";
         header('Location: login.php');
     }
     if ($_POST['rememberMe']) {
