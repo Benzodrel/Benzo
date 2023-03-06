@@ -39,17 +39,25 @@ require_once "headerTemplate.php";
     </div>
     <div class = "col">
     <h2>Остальные пользователи</h2>
-    <?php
-    if (count(glob('users/*.json')) <= 1) {
-        echo "Нет других пользователей";
-        die();
-    }
-    foreach (glob('users/*.json') as $i) {
-        if (ltrim(rtrim($i, '.json'), 'users/') !== $_SESSION['logged']) {
-            echo ltrim(rtrim($i, '.json'), 'users/') . '<br>';
-        }
-    }
-    ?>
+        <p id = "text">
+        <script>
+            setInterval(() => {
+                userPrint()
+            }, 1000);
+            function userPrint() {
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', 'echoUsers.php');
+                xhr.send();
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        return document.getElementById("text").innerHTML = xhr.response;
+                    } else {
+                        return document.getElementById("text").innerHTML = 'Ошибка запроса';
+                    }
+                }
+            }
+        </script>
+        </p>
     </div>
         </div>
     </div>
