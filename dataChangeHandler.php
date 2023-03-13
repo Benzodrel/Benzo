@@ -14,28 +14,39 @@ if (!file_exists("users/{$_SESSION['logged']}.json")) {
 }
 
 $path = "images/{$_SESSION['logged']}.png";
-$data = $_POST;
+$data = $_POST['registerData'];
 $image = $_FILES;
-$arrAll = getValidatedData($data, $image);
+$arrAll = getValidatedDataChange($data, $image);
 $json_data_old = json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true);
 if (empty($arrAll["error"])) {
     foreach ($json_data_old as $key => $value) {
-        if (empty($arrAll['data'][$key])) {
-            $arrAll['data'][$key] = $value;
+        if (isset($arrAll['data'][$key])) {
+            $json_data_old[$key] = $arrAll['data'][$key];
         }
     }
-    $json_data = json_encode($arrAll['data'], JSON_UNESCAPED_UNICODE);
+    if (!empty($_POST['registerData']['userPassword'])) {
+        $json_data_old['Password'] = md5($arrAll['data']['Password']);
+    }
+    $json_data = json_encode($json_data_old, JSON_UNESCAPED_UNICODE);
     file_put_contents("users/{$_SESSION['logged']}.json", $json_data);
-    move_uploaded_file($_FILES['avatar']['tmp_name'], $path);
+    if (!empty($_FILES['avatar']['tmp_name'])) {
+        if (move_uploaded_file($_FILES['avatar']['tmp_name'], $path) === false) {
+            $_SESSION['error']['save'] = 'Ошибка сохранения аватара';
+            header('Location: dataChange.php');
+            die();
+        }
+    }
 } else {
     foreach ($arrAll["error"] as $key => $value) {
         $_SESSION['error'][$key] = $value;
     }
     $_SESSION['error']['change'] = "Ошибка изменения данных";
+    unset ($_POST['registerData']);
     header('Location: dataChange.php');
     die();
 }
 
+unset ($_POST['registerData']);
 $_SESSION['message'] = "Data successfully updated";
 header('Location: index.php');
 die();

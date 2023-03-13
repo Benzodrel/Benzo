@@ -10,7 +10,10 @@ function getValues($value)
 }
 
 $header = 'Страница Регистрации';
-require_once "headerTemplate.php";
+ob_start();
+require_once( 'headerTemplate.php' );
+$output = ob_get_clean();
+echo $output;
 ?>
 <body>
 <header>
@@ -19,11 +22,11 @@ require_once "headerTemplate.php";
     <section class="text-center">
         <h1>Страница регистрации</h1>
         <form action="registerHandler.php" method="post" enctype="multipart/form-data" class="">
-            <p><input type="text" name="userName" required placeholder="Name" value="<?php getValues('userName') ?>">
+            <p><input type="text" name="registerData[name]"  required placeholder="Name" value="<?php getValues('userName') ?>">
             </p>
-            <p><input type="text" name="userSurname" required placeholder="Surname"
+            <p><input type="text" name="registerData[surname]" required placeholder="Surname"
                       value="<?php getValues('userSurname') ?>"></p>
-            <p><input type="email" name="userEmail" required placeholder="Email@mailbox.com"
+            <p><input type="email" name="registerData[email]" required placeholder="Email@mailbox.com"
                       value="<?php getValues('userEmail') ?>"></p>
             <?php
             if (isset($_SESSION['error']['Email'])) {
@@ -31,21 +34,21 @@ require_once "headerTemplate.php";
                 unset($_SESSION['error']['Email']);
             }
             ?>
-            <p><input type="text" name="Login" required placeholder="Login" value="<?php getValues('Login') ?>"></p>
+            <p><input type="text" name="registerData[Login]" required placeholder="Login" value="<?php getValues('Login') ?>"></p>
             <?php
             if (isset($_SESSION['error']['Login'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Login']}</p>";
                 unset($_SESSION['error']['Login']);
             }
             ?>
-            <p><input type="password" name="userPassword" required placeholder="Enter Password"></p>
+            <p><input type="password" name="registerData[userPassword]" required placeholder="Enter Password"></p>
             <?php
             if (isset($_SESSION['error']['Password'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Password']}</p>";
                 unset($_SESSION['error']['Password']);
             }
             ?>
-            <p><input type="password" name="userPasswordConfirm" required placeholder="Confirm Password"></p>
+            <p><input type="password" name="registerData[userPasswordConfirm]" required placeholder="Confirm Password"></p>
             <p>Avatar: <input type="file" name="avatar"></p>
             <?php
             if (isset($_SESSION['error']['Avatar1'])) {
@@ -62,9 +65,9 @@ require_once "headerTemplate.php";
             </p>
         </form>
         <?php
-        if (isset($_SESSION['message'])) {
-            echo "<p class='text-danger'>{$_SESSION['message']}</p>";
-            unset($_SESSION['message']);
+        if (isset($_SESSION['error']['register'])) {
+            echo "<p class='text-danger'>{$_SESSION['error']['register']}</p>";
+            unset($_SESSION['error']['register']);
         }
         ?>
         <p><a href="login.php">Уже зарегистрированы?</a></p>

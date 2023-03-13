@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (isset($_COOKIE['logged'])) {
+if (isset($_COOKIE['logged']) && $_COOKIE['password'] === json_decode(file_get_contents("users/{$_COOKIE['logged']}.json"), true)["Password"]) {
     $_SESSION['logged'] = $_COOKIE['logged'];
     header('Location: index.php');
     die();
@@ -10,7 +10,10 @@ if (isset($_SESSION['logged'])) {
     die();
 }
 $header = 'Страница входа';
-require_once "headerTemplate.php";
+ob_start();
+require_once( 'headerTemplate.php' );
+$output = ob_get_clean();
+echo $output;
 ?>
 <body>
 <header>
@@ -36,6 +39,10 @@ require_once "headerTemplate.php";
         if (isset($_SESSION['error']['enter'])) {
             echo "<p class='text-danger'> {$_SESSION['error']['enter']} </p>";
             unset($_SESSION['error']['enter']);
+        }
+        if (isset($_SESSION['error']['save'])) {
+            echo "<p class='text-danger'>{$_SESSION['error']['save']}</p>";
+            unset($_SESSION['error']['save']);
         }
         ?>
     </section>
