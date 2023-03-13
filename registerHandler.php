@@ -9,7 +9,6 @@ if (count($_POST['registerData']) === 6){
     $_SESSION['Login'] = $_POST['registerData']['Login'];
 } else {
     $_SESSION['error']['register'] = "Все поля обязательны к заполнению";
-    unset ($_POST['registerData']);
     header('Location: register.php');
     die();
 }
@@ -35,12 +34,10 @@ if (empty($arrAll["error"])) {
         $_SESSION['error'][$key] = $value;
     }
     $_SESSION['error']['register'] = "Ошибка регистрации";
-    unset ($_POST['registerData']);
     header('Location: register.php');
     die();
 }
 
-unset ($_POST['registerData']);
 $_SESSION['message'] = "Регистрация завершена";
 header('Location: login.php');
 

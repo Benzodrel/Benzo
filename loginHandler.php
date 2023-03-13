@@ -14,11 +14,10 @@ $json = json_decode(file_get_contents("users/{$login}.json"), true);
 
     if ($password === md5($loginPassword)) {
         $_SESSION['logged'] = $_POST['Login'];
-        if ($_POST['rememberMe']) {
+        if (isset($_POST['rememberMe'])) {
             setcookie('logged', $_POST['Login'], time() + 3600 * 24 * 7);// 1 week
             setcookie('password', md5($_POST['userPassword']), time() + 3600 * 24 * 7);
         }
-
         header('Location: index.php');
     } else {
         $_SESSION['error']['enter'] = "Неверный пароль";

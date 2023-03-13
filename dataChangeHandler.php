@@ -41,12 +41,10 @@ if (empty($arrAll["error"])) {
         $_SESSION['error'][$key] = $value;
     }
     $_SESSION['error']['change'] = "Ошибка изменения данных";
-    unset ($_POST['registerData']);
     header('Location: dataChange.php');
     die();
 }
 
-unset ($_POST['registerData']);
 $_SESSION['message'] = "Data successfully updated";
 header('Location: index.php');
 die();
