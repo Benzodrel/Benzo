@@ -30,11 +30,9 @@ echo $output;
             <?php
             if (isset($_SESSION['error']['Avatar1'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Avatar1']}</p>";
-                unset($_SESSION['error']['Avatar1']);
             }
             if (isset($_SESSION['error']['Avatar2'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Avatar2']}</p>";
-                unset($_SESSION['error']['Avatar2']);
             }
             ?>
             <p><input type="text" name="registerData[name]" placeholder="Enter New Name"></p>
@@ -43,14 +41,12 @@ echo $output;
             <?php
             if (isset($_SESSION['error']['Email'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Email']}</p>";
-                unset($_SESSION['error']['Email']);
             }
             ?>
             <p><input type="password" name="registerData[userPassword]" placeholder="Enter New Password"></p>
             <?php
             if (isset($_SESSION['error']['Password'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Password']}</p>";
-                unset($_SESSION['error']['Password']);
             }
             ?>
             <p><input type="password" name="registerData[userPasswordConfirm]" placeholder="Confirm New Password"></p>
@@ -60,12 +56,14 @@ echo $output;
         <?php
         if (isset($_SESSION['error']['change'])) {
             echo "<p class='text-danger'> {$_SESSION['error']['change']} </p>";
-            unset($_SESSION['error']['change']);
         }
         if (isset($_SESSION['error']['save'])) {
             echo "<p class='text-danger'>{$_SESSION['error']['save']}</p>";
-            unset($_SESSION['error']['save']);
         }
+        if (isset($_SESSION['error']['saveData'])) {
+            echo "<p class='text-danger'>{$_SESSION['error']['saveData']}</p>";
+        }
+        unset($_SESSION['error']);
         ?>
     </section>
 </main>

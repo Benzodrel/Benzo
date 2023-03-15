@@ -31,21 +31,18 @@ echo $output;
             <?php
             if (isset($_SESSION['error']['Email'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Email']}</p>";
-                unset($_SESSION['error']['Email']);
             }
             ?>
             <p><input type="text" name="registerData[Login]" required placeholder="Login" value="<?php getValues('Login') ?>"></p>
             <?php
             if (isset($_SESSION['error']['Login'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Login']}</p>";
-                unset($_SESSION['error']['Login']);
             }
             ?>
             <p><input type="password" name="registerData[userPassword]" required placeholder="Enter Password"></p>
             <?php
             if (isset($_SESSION['error']['Password'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Password']}</p>";
-                unset($_SESSION['error']['Password']);
             }
             ?>
             <p><input type="password" name="registerData[userPasswordConfirm]" required placeholder="Confirm Password"></p>
@@ -53,11 +50,9 @@ echo $output;
             <?php
             if (isset($_SESSION['error']['Avatar1'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Avatar1']}</p>";
-                unset($_SESSION['error']['Avatar1']);
             }
             if (isset($_SESSION['error']['Avatar2'])) {
                 echo "<p class='text-danger'>{$_SESSION['error']['Avatar2']}</p>";
-                unset($_SESSION['error']['Avatar2']);
             }
             ?>
             <p>
@@ -67,8 +62,11 @@ echo $output;
         <?php
         if (isset($_SESSION['error']['register'])) {
             echo "<p class='text-danger'>{$_SESSION['error']['register']}</p>";
-            unset($_SESSION['error']['register']);
         }
+        if (isset($_SESSION['error']['saveData'])) {
+            echo "<p class='text-danger'>{$_SESSION['error']['saveData']}</p>";
+        }
+        unset($_SESSION['error']);
         ?>
         <p><a href="login.php">Уже зарегистрированы?</a></p>
     </section>

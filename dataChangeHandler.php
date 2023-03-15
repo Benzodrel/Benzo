@@ -28,7 +28,11 @@ if (empty($arrAll["error"])) {
         $json_data_old['Password'] = md5($arrAll['data']['Password']);
     }
     $json_data = json_encode($json_data_old, JSON_UNESCAPED_UNICODE);
-    file_put_contents("users/{$_SESSION['logged']}.json", $json_data);
+    if (file_put_contents("users/{$_SESSION['logged']}.json", $json_data) === false ) {
+        $_SESSION['error']['saveData'] = 'Ошибка записи в файл';
+        header('Location: dataChange.php');
+        die();
+    }
     if (!empty($_FILES['avatar']['tmp_name'])) {
         if (move_uploaded_file($_FILES['avatar']['tmp_name'], $path) === false) {
             $_SESSION['error']['save'] = 'Ошибка сохранения аватара';

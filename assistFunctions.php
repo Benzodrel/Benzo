@@ -7,7 +7,8 @@ function isEmailExists(string $email): bool
         return false;
     }
     foreach (glob("users/*.json") as $file) {
-        if (isset(json_decode(file_get_contents($file), true)["Email"]) && json_decode(file_get_contents($file), true)["Email"] === $email) {
+        $fileArr = json_decode(file_get_contents($file), true);
+        if (isset($fileArr["Email"]) && $fileArr["Email"] === $email) {
             return true;
         }
     }
