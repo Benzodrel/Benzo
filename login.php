@@ -1,7 +1,22 @@
 <?php
 session_start();
-if (isset($_COOKIE['logged']) && $_COOKIE['password'] === json_decode(file_get_contents("users/{$_COOKIE['logged']}.json"), true)["Password"]) {
-    $_SESSION['logged'] = $_COOKIE['logged'];
+
+if (isset($_COOKIE['logged'])) {
+    require_once 'config.php';
+    $connect = mysqli_connect($host, $username, $password, $databaseName);
+    if ($connect === false) {
+        $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
+        header('Location: login.php');
+        die();
+    }
+    $sql = "SELECT `password` FROM `users` WHERE `login` = '{$_COOKIE['logged']}' ";
+    $result = mysqli_query($connect, $sql);
+    $arr = mysqli_fetch_assoc($result);
+    $dbLogin = $arr['login'];
+    $dbPassword = $arr['password'];
+    if ($arr['password'] === $dbPassword) {
+        $_SESSION['logged'] = $_COOKIE['logged'];
+    }
     header('Location: index.php');
     die();
 }
