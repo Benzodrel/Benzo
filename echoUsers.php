@@ -2,7 +2,7 @@
 session_start();
 $arr = [];
 if (count(glob('users/*.json')) <= 1) {
-    echo "Нет других пользователей";
+    array_push($arr, "Нет других пользователей");
     die();
 }
 foreach (glob('users/*.json') as $i) {
@@ -10,4 +10,4 @@ foreach (glob('users/*.json') as $i) {
         array_push($arr, (substr(substr($i, 0, -5), 6)) );
     }
 }
-echo json_encode($arr);
+echo json_encode($arr, JSON_UNESCAPED_UNICODE);

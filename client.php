@@ -6,7 +6,7 @@ if (!isset($_SESSION['logged'])) {
 }
 $header = 'Страница пользователя';
 ob_start();
-require_once( 'headerTemplate.php' );
+require_once('headerTemplate.php');
 $output = ob_get_clean();
 echo $output;
 ?>
@@ -27,20 +27,14 @@ echo $output;
                 ?>
                 >
                 <?php $yourData = json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true) ?>
+                <p id="login"><?= $yourData['Login'] ?></p>
                 <p>Your Name:<?= $yourData['Name'] ?></p>
                 <p>Your Surname:<?= $yourData['Surname'] ?></p>
                 <p>Your E-mail:<?= $yourData['Email'] ?></p>
-                <p><a href="dataChange.php">Изменить личные данные</a></p>
-                <p><a href="client.php">Посмотреть websocket версию</a></p>
+                <p><a href="index.php">Вернуться</a></p>
                 <form action="logout.php" method="post">
                     <button type="submit" class="btn btn-primary">Logout</button>
                 </form>
-                <?php
-                if (isset($_SESSION['message'])) {
-                    echo "<p class='text-success'>{$_SESSION['message']}</p>";
-                    unset($_SESSION['message']);
-                }
-                ?>
             </div>
             <div class="col">
                 <h2>Остальные пользователи</h2>
@@ -52,26 +46,32 @@ echo $output;
 <footer>
 </footer>
 <script>
-    window.onload = function () {
-        setInterval(() => {
-            userPrint()
-        }, 1000);
+    let session = document.getElementById('login').innerHTML;
 
-        function userPrint() {
-            let xhr = new XMLHttpRequest();
-            xhr.open('GET', 'echoUsers.php');
-            xhr.send();
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    document.getElementById("text").innerHTML ='';
-                    let json = JSON.parse(xhr.response);
-                    for (let i in  json) {
-                        document.getElementById("text").innerHTML += '<p>'+(parseInt(i)+1)+' - '+json[i]+'</p>' ;
-                    }
-                } else {
-                    return document.getElementById("text").innerHTML = 'Ошибка запроса';
+    const host = 'ws://127.0.0.1:12345/';
+    socketFun();
+
+    function socketFun() {
+
+        let socket = new WebSocket(host);
+
+        socket.onmessage = function (event) {
+            document.getElementById("text").innerHTML = '';
+            let json = JSON.parse(event.data);
+            let z = 1;
+            for (let i in json) {
+                if (json[i] !== session) {
+                    document.getElementById("text").innerHTML += '<p>' + z + ' - ' + json[i] + '</p>';
+                    z++;
                 }
+
             }
+        }
+
+        socket.onclose = () => {
+            document.getElementById("text").innerHTML = "Socket error";
+            setTimeout(() => socketFun(), 4000);
+            socket.close();
         }
     }
 </script>
