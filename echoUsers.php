@@ -1,13 +1,30 @@
 <?php
 session_start();
+require_once 'config.php';
 $arr = [];
-if (count(glob('users/*.json')) <= 1) {
-    array_push($arr, "Нет других пользователей");
+
+$dataBase = mysqli_connect($host, $username, $password, $databaseName);
+if ($dataBase === false) {
+    $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
+    header('Location: login.php');
     die();
 }
-foreach (glob('users/*.json') as $i) {
-    if (substr(substr($i, 0, -5), 6) !== $_SESSION['logged']) {
-        array_push($arr, (substr(substr($i, 0, -5), 6)) );
-    }
+
+$sql = "SELECT `login` FROM `users` WHERE `login` != '{$_SESSION['logged']}' ";
+
+$query = mysqli_query($dataBase, $sql);
+if ($query === false) {
+    $_SESSION['error']['saveData'] = "Ошибка выполнения запроса";
+    header('Location: login.php');
+    die();
 }
-echo json_encode($arr, JSON_UNESCAPED_UNICODE);
+
+while ($row = mysqli_fetch_assoc($query)) {
+    if ($row['login'] === NULL) {
+        array_push($arr, "Нет других пользователей");
+    }
+    array_push($arr, $row['login']);
+}
+mysqli_close($dataBase);
+
+echo json_encode($arr, JSON_UNESCAPED_UNICODE | JSON_FORCE_OBJECT);

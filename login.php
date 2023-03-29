@@ -12,6 +12,7 @@ if (isset($_COOKIE['logged'])) {
     $sql = "SELECT `password` FROM `users` WHERE `login` = '{$_COOKIE['logged']}' ";
     $result = mysqli_query($connect, $sql);
     $arr = mysqli_fetch_assoc($result);
+    mysqli_close($connect);
     $dbLogin = $arr['login'];
     $dbPassword = $arr['password'];
     if ($arr['password'] === $dbPassword) {
@@ -19,11 +20,13 @@ if (isset($_COOKIE['logged'])) {
     }
     header('Location: index.php');
     die();
+
 }
 if (isset($_SESSION['logged'])) {
     header('Location: index.php');
     die();
 }
+
 $header = 'Страница входа';
 ob_start();
 require_once( 'headerTemplate.php' );

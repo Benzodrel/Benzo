@@ -6,9 +6,31 @@ if (!isset($_SESSION['logged'])) {
 }
 $header = 'Страница пользователя';
 ob_start();
-require_once( 'headerTemplate.php' );
+require_once('headerTemplate.php');
 $output = ob_get_clean();
 echo $output;
+
+require_once 'config.php';
+$connect = mysqli_connect($host, $username, $password, $databaseName);
+if ($connect === false) {
+    $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
+    header('Location: login.php');
+    die();
+}
+$sql = "SELECT `name`, `surname`, `email` FROM `users` WHERE `login` = '{$_SESSION['logged']}' ";
+$result = mysqli_query($connect, $sql);
+if ($result === false) {
+    $_SESSION['error']['saveData'] = "Ошибка исполнения запроса";
+    header('Location: login.php');
+    die();
+}
+$arr = mysqli_fetch_assoc($result);
+if ($arr === false) {
+    $_SESSION['error']['saveData'] = "Ошибка формирования ассоциативного массива";
+    header('Location: login.php');
+    die();
+}
+mysqli_close($connect);
 ?>
 <body>
 <header>
@@ -26,10 +48,9 @@ echo $output;
                 }
                 ?>
                 >
-                <?php $yourData = json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true) ?>
-                <p>Your Name:<?= $yourData['Name'] ?></p>
-                <p>Your Surname:<?= $yourData['Surname'] ?></p>
-                <p>Your E-mail:<?= $yourData['Email'] ?></p>
+                <p>Your Name:<?= $arr['name'] ?></p>
+                <p>Your Surname:<?= $arr['surname'] ?></p>
+                <p>Your E-mail:<?= $arr['email'] ?></p>
                 <p><a href="dataChange.php">Изменить личные данные</a></p>
                 <p><a href="client.php">Посмотреть websocket версию</a></p>
                 <form action="logout.php" method="post">
@@ -63,13 +84,13 @@ echo $output;
             xhr.send();
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    document.getElementById("text").innerHTML ='';
+                    document.getElementById("text").innerHTML = '';
                     let json = JSON.parse(xhr.response);
-                    for (let i in  json) {
-                        document.getElementById("text").innerHTML += '<p>'+(parseInt(i)+1)+' - '+json[i]+'</p>' ;
+                    for (let i in json) {
+                        document.getElementById("text").innerHTML += '<p>' + (parseInt(i) + 1) + ' - ' + json[i] + '</p>';
                     }
                 } else {
-                    return document.getElementById("text").innerHTML = 'Ошибка запроса';
+                    document.getElementById("text").innerHTML = 'Ошибка запроса';
                 }
             }
         }

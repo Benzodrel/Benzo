@@ -11,11 +11,22 @@ if ($connect === false) {
     die();
 }
 
-$sql = ("SELECT `login`, `password` FROM `users` WHERE `login` = ? ");
+$sql = "SELECT `login`, `password` FROM `users` WHERE `login` = ? ";
 $result = mysqli_execute_query($connect, $sql, [$login]);
+if ($result === false) {
+    $_SESSION['error']['saveData'] = "Ошибка исполнения запроса";
+    header('Location: login.php');
+    die();
+}
 $arr = mysqli_fetch_assoc($result);
+if ($arr === false) {
+    $_SESSION['error']['saveData'] = "Ошибка формирования ассоциативного массива";
+    header('Location: login.php');
+    die();
+}
 $dbLogin = $arr['login'];
 $dbPassword = $arr['password'];
+mysqli_close($connect);
 
 if (!empty($_POST['Login']) === true) {
     if ($dbLogin === NULL) {

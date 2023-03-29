@@ -60,6 +60,7 @@ if (empty($arrAll["error"])) {
     die();
 }
 
+mysqli_close($connect);
 $_SESSION['message'] = "Регистрация завершена";
 header('Location: login.php');
 
