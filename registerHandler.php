@@ -42,7 +42,7 @@ if (empty($arrAll["error"])) {
         header('Location: register.php');
         die();
     }
-    mysqli_close($connect);
+
     if (!empty($_FILES['avatar']['tmp_name'])) {
         if (move_uploaded_file($_FILES['avatar']['tmp_name'], $path) === false) {
             $_SESSION['error']['save'] = 'Ошибка сохранения аватара';
