@@ -4,6 +4,28 @@ if (!isset($_SESSION['logged'])) {
     header('Location: login.php');
     die();
 }
+require_once 'config.php';
+$connect = mysqli_connect($host, $username, $password, $databaseName);
+if ($connect === false) {
+    $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
+    header('Location: login.php');
+    die();
+}
+$sql = "SELECT `name`, `surname`, `email` FROM `users` WHERE `login` = '{$_SESSION['logged']}' ";
+$result = mysqli_query($connect, $sql);
+if ($result === false) {
+    $_SESSION['error']['saveData'] = "Ошибка исполнения запроса";
+    header('Location: login.php');
+    die();
+}
+$arr = mysqli_fetch_assoc($result);
+if ($arr === false) {
+    $_SESSION['error']['saveData'] = "Ошибка формирования ассоциативного массива";
+    header('Location: login.php');
+    die();
+}
+mysqli_close($connect);
+
 $header = 'Страница пользователя';
 ob_start();
 require_once('headerTemplate.php');
@@ -26,11 +48,10 @@ echo $output;
                 }
                 ?>
                 >
-                <?php $yourData = json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true) ?>
-                <p id="login"><?= $yourData['Login'] ?></p>
-                <p>Your Name:<?= $yourData['Name'] ?></p>
-                <p>Your Surname:<?= $yourData['Surname'] ?></p>
-                <p>Your E-mail:<?= $yourData['Email'] ?></p>
+                <p id="login"><?= $_SESSION['logged'] ?></p>
+                <p>Your Name:<?= $arr['name'] ?></p>
+                <p>Your Surname:<?= $arr['surname'] ?></p>
+                <p>Your E-mail:<?= $arr['email'] ?></p>
                 <p><a href="index.php">Вернуться</a></p>
                 <form action="logout.php" method="post">
                     <button type="submit" class="btn btn-primary">Logout</button>
