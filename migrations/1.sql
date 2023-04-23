@@ -1,0 +1,12 @@
+CREATE DATABASE IF NOT EXISTS `my_database`
+DEFAULT CHARACTER SET utf8mb4; 
+
+USE `my_database`;
+CREATE TABLE IF NOT EXISTS `Users` (
+`id` INT NOT NULL AUTO_INCREMENT, 
+`login` VARCHAR(20) NOT NULL,
+`name` NVARCHAR (20) NOT NULL,
+`surname` NVARCHAR (20) NOT NULL,
+`email` VARCHAR (255) NOT NULL,
+`password` CHAR (60),
+PRIMARY KEY (`id`));
