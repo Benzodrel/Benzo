@@ -18,7 +18,7 @@ function isUserExists(string $data): bool {
     require "config.php";
 
     $connect = mysqli_connect($host, $username, $password, $databaseName);
-    $sql = "SELECT `login` FROM `users` WHERE `login` = ?";
+    $sql = "SELECT `login` FROM `users` WHERE EXISTS (SELECT `login` FROM `users` WHERE `login` = ?)";
     $result = mysqli_execute_query($connect, $sql, [$data]);
     $arr =  mysqli_fetch_assoc($result);
     mysqli_close($connect);
@@ -33,7 +33,7 @@ function isEmailExists(string $email): bool
 {
     require "config.php";
     $connect = mysqli_connect($host, $username, $password, $databaseName);
-    $sql = "SELECT `email` FROM `users` WHERE `email` = ?";
+    $sql = "SELECT `email` FROM `users` WHERE EXISTS (SELECT `email` FROM `users` WHERE `email` = ?)";
     $result = mysqli_execute_query($connect, $sql, [$email]);
     $arr = mysqli_fetch_assoc($result);
     if ($arr !== NULL) {
