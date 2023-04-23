@@ -107,3 +107,5 @@ function getAllUsers() {
     mysqli_close($dataBase);
     return $arr;
 }
+
+

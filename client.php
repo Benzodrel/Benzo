@@ -4,27 +4,9 @@ if (!isset($_SESSION['logged'])) {
     header('Location: login.php');
     die();
 }
-require_once 'config.php';
-$connect = mysqli_connect($host, $username, $password, $databaseName);
-if ($connect === false) {
-    $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
-    header('Location: login.php');
-    die();
-}
-$sql = "SELECT `name`, `surname`, `email` FROM `users` WHERE `login` = '{$_SESSION['logged']}' ";
-$result = mysqli_query($connect, $sql);
-if ($result === false) {
-    $_SESSION['error']['saveData'] = "Ошибка исполнения запроса";
-    header('Location: login.php');
-    die();
-}
-$arr = mysqli_fetch_assoc($result);
-if ($arr === false) {
-    $_SESSION['error']['saveData'] = "Ошибка формирования ассоциативного массива";
-    header('Location: login.php');
-    die();
-}
-mysqli_close($connect);
+require_once 'dataBase_functions.php';
+$arr = getUserData($_SESSION['logged']);
+
 
 $header = 'Страница пользователя';
 ob_start();
@@ -70,14 +52,14 @@ echo $output;
     let session = document.getElementById('login').innerHTML;
 
     const host = 'ws://127.0.0.1:12345/';
-    socketFun();
+    socketFun(host);
+    function socketFun(hostAddress) {
 
-    function socketFun() {
-
-        let socket = new WebSocket(host);
+        let socket = new WebSocket(hostAddress);
 
         socket.onmessage = function (event) {
             document.getElementById("text").innerHTML = '';
+
             let json = JSON.parse(event.data);
             let z = 1;
             for (let i in json) {
