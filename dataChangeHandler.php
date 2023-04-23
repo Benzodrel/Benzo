@@ -1,38 +1,45 @@
 <?php
 session_start();
-
+require_once 'dataBase_functions.php';
 require_once "assistFunctions.php";
 
 if (!isset($_SESSION['logged'])) {
     header('Location: login.php');
     die();
 }
-if (!file_exists("users/{$_SESSION['logged']}.json")) {
-    $_SESSION['error'] = "Data page doesn't exists";
-    header('Location: dataChange.php');
-    die();
-}
+
 
 $path = "images/{$_SESSION['logged']}.png";
 $data = $_POST['registerData'];
 $image = $_FILES;
 $arrAll = getValidatedDataChange($data, $image);
-$json_data_old = json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true);
+
+$data_old = getUserData($_SESSION['logged']);
+
 if (empty($arrAll["error"])) {
-    foreach ($json_data_old as $key => $value) {
+    foreach ($data_old as $key => $value) {
         if (isset($arrAll['data'][$key])) {
-            $json_data_old[$key] = $arrAll['data'][$key];
+            $data_old[$key] = $arrAll['data'][$key];
         }
     }
     if (!empty($_POST['registerData']['userPassword'])) {
-        $json_data_old['Password'] = md5($arrAll['data']['Password']);
+        $data_old['password'] = password_hash($arrAll['data']['password'], PASSWORD_BCRYPT);
+        $_SESSION['error']['saveData'] = $data_old;
     }
-    $json_data = json_encode($json_data_old, JSON_UNESCAPED_UNICODE);
-    if (file_put_contents("users/{$_SESSION['logged']}.json", $json_data) === false ) {
-        $_SESSION['error']['saveData'] = 'Ошибка записи в файл';
-        header('Location: dataChange.php');
-        die();
+    $data_new = [];
+    foreach ($data_old as $value) {
+        array_push($data_new, $value);
     }
+
+    updateUserData($data_new, $_SESSION['logged']);
+//    $sql = "UPDATE `users` SET `name` = ?, surname = ?, email = ?, `password` = ? WHERE `login` = '{$_SESSION['logged']}'";
+//    $result = mysqli_execute_query($connect, $sql, $data_new);
+//    if ($result === false) {
+//        $_SESSION['error']['saveData'] = "Ошибка исполнения запроса";
+//        header('Location: dataChange.php');
+//        die();
+//    }
+
     if (!empty($_FILES['avatar']['tmp_name'])) {
         if (move_uploaded_file($_FILES['avatar']['tmp_name'], $path) === false) {
             $_SESSION['error']['save'] = 'Ошибка сохранения аватара';

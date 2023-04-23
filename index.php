@@ -6,9 +6,19 @@ if (!isset($_SESSION['logged'])) {
 }
 $header = 'Страница пользователя';
 ob_start();
-require_once( 'headerTemplate.php' );
+require_once('headerTemplate.php');
 $output = ob_get_clean();
 echo $output;
+
+require_once "dataBase_functions.php";
+
+$arr = getUserData($_SESSION['logged']);
+if ($arr === false) {
+    $_SESSION['error']['saveData'] = "Ошибка получения данных пользователя из базы данных";
+    header ('Location: index.php');
+    die();
+}
+
 ?>
 <body>
 <header>
@@ -26,11 +36,11 @@ echo $output;
                 }
                 ?>
                 >
-                <?php $yourData = json_decode(file_get_contents("users/{$_SESSION['logged']}.json"), true) ?>
-                <p>Your Name:<?= $yourData['Name'] ?></p>
-                <p>Your Surname:<?= $yourData['Surname'] ?></p>
-                <p>Your E-mail:<?= $yourData['Email'] ?></p>
+                <p>Your Name:<?= $arr['name'] ?></p>
+                <p>Your Surname:<?= $arr['surname'] ?></p>
+                <p>Your E-mail:<?= $arr['email'] ?></p>
                 <p><a href="dataChange.php">Изменить личные данные</a></p>
+                <p><a href="client.php">Посмотреть websocket версию</a></p>
                 <form action="logout.php" method="post">
                     <button type="submit" class="btn btn-primary">Logout</button>
                 </form>
@@ -38,6 +48,10 @@ echo $output;
                 if (isset($_SESSION['message'])) {
                     echo "<p class='text-success'>{$_SESSION['message']}</p>";
                     unset($_SESSION['message']);
+                }
+                if (isset($_SESSION['error']['saveData'])) {
+                    echo "<p class='text-danger'>{$_SESSION['error']['saveData']}</p>";
+                    unset($_SESSION['error']['saveData']);
                 }
                 ?>
             </div>
@@ -62,13 +76,13 @@ echo $output;
             xhr.send();
             xhr.onload = function () {
                 if (xhr.status === 200) {
-                    document.getElementById("text").innerHTML ='';
+                    document.getElementById("text").innerHTML = '';
                     let json = JSON.parse(xhr.response);
-                    for (let i in  json) {
-                        document.getElementById("text").innerHTML += '<p>'+(parseInt(i)+1)+' - '+json[i]+'</p>' ;
+                    for (let i in json) {
+                        document.getElementById("text").innerHTML += '<p>' + (parseInt(i) + 1) + ' - ' + json[i] + '</p>';
                     }
                 } else {
-                    return document.getElementById("text").innerHTML = 'Ошибка запроса';
+                    document.getElementById("text").innerHTML = 'Ошибка запроса';
                 }
             }
         }

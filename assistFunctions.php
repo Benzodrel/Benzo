@@ -1,30 +1,19 @@
 <?php
 const MAX_UPLOAD_IMAGE_SIZE_BYTE = 10000;
 
-function isEmailExists(string $email): bool
-{
-    if (glob("users/*.json") === false) {
-        return false;
-    }
-    foreach (glob("users/*.json") as $file) {
-        $fileArr = json_decode(file_get_contents($file), true);
-        if (isset($fileArr["Email"]) && $fileArr["Email"] === $email) {
-            return true;
-        }
-    }
-    return false;
-}
-
 
 function getValidatedDataChange(array $data, array $image): array
 {
     $arrData = [];
     $arrError = [];
+    require_once "dataBase_functions.php";
     if (!empty($data['Login'])) {
-        if (file_exists("users/{$data["Login"]}.json")) {
+
+
+        if (isUserExists($data['Login']) !== false) {
             $arrError['Login'] = "This user is already exists";
         } else {
-            $arrData['Login'] = $data['Login'];
+            $arrData['login'] = $data['Login'];
         }
     }
     if (!empty($data['email'])) {
@@ -33,7 +22,7 @@ function getValidatedDataChange(array $data, array $image): array
         } elseif (isEmailExists($data['email'])) {
             $arrError['Email'] = "Another user already have this E-mail";
         } else {
-            $arrData['Email'] = $data['email'];
+            $arrData['email'] = $data['email'];
         }
     }
     if (!empty($data['userPassword'])) {
@@ -42,7 +31,7 @@ function getValidatedDataChange(array $data, array $image): array
         } elseif ($data["userPassword"] !== $data["userPasswordConfirm"]) {
             $arrError['Password'] = "Passwords don't match";
         } else {
-            $arrData['Password'] = $data['userPasswordConfirm'];
+            $arrData['password'] = $data['userPasswordConfirm'];
         }
     }
     if (is_uploaded_file($image['avatar']['tmp_name'])) {
@@ -54,10 +43,10 @@ function getValidatedDataChange(array $data, array $image): array
         }
     }
     if (!empty($data['name'])) {
-        $arrData['Name'] = $data['name'];
+        $arrData['name'] = $data['name'];
     }
     if (!empty($data['surname'])) {
-        $arrData['Surname'] = $data['surname'];
+        $arrData['surname'] = $data['surname'];
     }
     return ["error" => $arrError, "data" => $arrData];
 }
@@ -67,7 +56,10 @@ function getValidatedData(array $data, array $image): array
 {
     $arrData = [];
     $arrError = [];
-    if (file_exists("users/{$data["Login"]}.json")) {
+    require_once "dataBase_functions.php";
+
+
+    if (isUserExists($data['Login'])) {
         $arrError['Login'] = "This user is already exists";
     } else {
         $arrData['Login'] = $data['Login'];

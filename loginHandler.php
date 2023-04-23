@@ -1,22 +1,26 @@
 <?php
 session_start();
+require_once 'dataBase_functions.php';
 $login = $_POST["Login"];
 $loginPassword = $_POST['userPassword'];
+
+$arr = getLoginPassword($login);
+$dbLogin = $arr['login'];
+$dbPassword = $arr['password'];
+
+
 if (!empty($_POST['Login']) === true) {
-    if (!file_exists("users/{$login}.json")) {
+    if ($dbLogin === NULL) {
         $_SESSION['error']['enter'] = 'Пользователь с таким именем отсутствует';
         header('Location: login.php');
         die();
     }
-$json = json_decode(file_get_contents("users/{$login}.json"), true);
 
-    $password = $json['Password'];
-
-    if ($password === md5($loginPassword)) {
+    if (password_verify($loginPassword, $dbPassword)) {
         $_SESSION['logged'] = $_POST['Login'];
         if (isset($_POST['rememberMe'])) {
-            setcookie('logged', $_POST['Login'], time() + 3600 * 24 * 7);// 1 week
-            setcookie('password', md5($_POST['userPassword']), time() + 3600 * 24 * 7);
+            setcookie('logged', $dbLogin, time() + 3600 * 24 * 7);// 1 week
+            setcookie('password', $dbPassword, time() + 3600 * 24 * 7);
         }
         header('Location: index.php');
     } else {

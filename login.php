@@ -1,14 +1,24 @@
 <?php
 session_start();
-if (isset($_COOKIE['logged']) && $_COOKIE['password'] === json_decode(file_get_contents("users/{$_COOKIE['logged']}.json"), true)["Password"]) {
-    $_SESSION['logged'] = $_COOKIE['logged'];
+
+if (isset($_COOKIE['logged'])) {
+    require_once 'dataBase_functions.php';
+
+    $arr = getLoginPassword();
+    $dbLogin = $arr['login'];
+    $dbPassword = $arr['password'];
+    if ($_COOKIE['password'] === $dbPassword) {
+        $_SESSION['logged'] = $_COOKIE['logged'];
+    }
     header('Location: index.php');
     die();
+
 }
 if (isset($_SESSION['logged'])) {
     header('Location: index.php');
     die();
 }
+
 $header = 'Страница входа';
 ob_start();
 require_once( 'headerTemplate.php' );
