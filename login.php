@@ -2,20 +2,12 @@
 session_start();
 
 if (isset($_COOKIE['logged'])) {
-    require_once 'config.php';
-    $connect = mysqli_connect($host, $username, $password, $databaseName);
-    if ($connect === false) {
-        $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
-        header('Location: login.php');
-        die();
-    }
-    $sql = "SELECT `password` FROM `users` WHERE `login` = '{$_COOKIE['logged']}' ";
-    $result = mysqli_query($connect, $sql);
-    $arr = mysqli_fetch_assoc($result);
-    mysqli_close($connect);
+    require_once 'dataBase_functions.php';
+
+    $arr = getLoginPassword();
     $dbLogin = $arr['login'];
     $dbPassword = $arr['password'];
-    if ($arr['password'] === $dbPassword) {
+    if ($_COOKIE['password'] === $dbPassword) {
         $_SESSION['logged'] = $_COOKIE['logged'];
     }
     header('Location: index.php');

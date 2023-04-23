@@ -1,32 +1,13 @@
 <?php
 session_start();
-require_once 'config.php';
+require_once 'dataBase_functions.php';
 $login = $_POST["Login"];
 $loginPassword = $_POST['userPassword'];
 
-$connect = mysqli_connect($host, $username, $password, $databaseName);
-if ($connect === false) {
-    $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
-    header('Location: login.php');
-    die();
-}
-
-$sql = "SELECT `login`, `password` FROM `users` WHERE `login` = ? ";
-$result = mysqli_execute_query($connect, $sql, [$login]);
-if ($result === false) {
-    $_SESSION['error']['saveData'] = "Ошибка исполнения запроса";
-    header('Location: login.php');
-    die();
-}
-$arr = mysqli_fetch_assoc($result);
-if ($arr === false) {
-    $_SESSION['error']['saveData'] = "Ошибка формирования ассоциативного массива";
-    header('Location: login.php');
-    die();
-}
+$arr = getLoginPassword($login);
 $dbLogin = $arr['login'];
 $dbPassword = $arr['password'];
-mysqli_close($connect);
+
 
 if (!empty($_POST['Login']) === true) {
     if ($dbLogin === NULL) {
@@ -38,7 +19,7 @@ if (!empty($_POST['Login']) === true) {
     if (password_verify($loginPassword, $dbPassword)) {
         $_SESSION['logged'] = $_POST['Login'];
         if (isset($_POST['rememberMe'])) {
-            setcookie('logged', $_POST['Login'], time() + 3600 * 24 * 7);// 1 week
+            setcookie('logged', $dbLogin, time() + 3600 * 24 * 7);// 1 week
             setcookie('password', $dbPassword, time() + 3600 * 24 * 7);
         }
         header('Location: index.php');

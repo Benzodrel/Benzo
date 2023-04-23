@@ -10,27 +10,15 @@ require_once('headerTemplate.php');
 $output = ob_get_clean();
 echo $output;
 
-require_once 'config.php';
-$connect = mysqli_connect($host, $username, $password, $databaseName);
-if ($connect === false) {
-    $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
-    header('Location: login.php');
-    die();
-}
-$sql = "SELECT `name`, `surname`, `email` FROM `users` WHERE `login` = '{$_SESSION['logged']}' ";
-$result = mysqli_query($connect, $sql);
-if ($result === false) {
-    $_SESSION['error']['saveData'] = "Ошибка исполнения запроса";
-    header('Location: login.php');
-    die();
-}
-$arr = mysqli_fetch_assoc($result);
+require_once "dataBase_functions.php";
+
+$arr = getUserData($_SESSION['logged']);
 if ($arr === false) {
-    $_SESSION['error']['saveData'] = "Ошибка формирования ассоциативного массива";
-    header('Location: login.php');
+    $_SESSION['error']['saveData'] = "Ошибка получения данных пользователя из базы данных";
+    header ('Location: index.php');
     die();
 }
-mysqli_close($connect);
+
 ?>
 <body>
 <header>
@@ -60,6 +48,10 @@ mysqli_close($connect);
                 if (isset($_SESSION['message'])) {
                     echo "<p class='text-success'>{$_SESSION['message']}</p>";
                     unset($_SESSION['message']);
+                }
+                if (isset($_SESSION['error']['saveData'])) {
+                    echo "<p class='text-danger'>{$_SESSION['error']['saveData']}</p>";
+                    unset($_SESSION['error']['saveData']);
                 }
                 ?>
             </div>

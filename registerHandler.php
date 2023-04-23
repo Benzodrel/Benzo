@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'config.php';
+require_once 'dataBase_functions.php';
 require_once 'assistFunctions.php';
 if (count($_POST['registerData']) === 6) {
     $_SESSION['userSurname'] = $_POST['registerData']['surname'];
@@ -20,29 +20,8 @@ $image = $_FILES;
 $arrAll = getValidatedData($data, $image);
 if (empty($arrAll["error"])) {
     $arrAll['data']['Password'] = password_hash($arrAll['data']['Password'], PASSWORD_BCRYPT);
-    $connect = mysqli_connect($host, $username, $password, $databaseName);
-    if ($connect === false) {
-        $_SESSION['error']['saveData'] = "Ошибка подключения в базе данных";
-        header('Location: register.php');
-        die();
-    }
-    $stmt = mysqli_prepare($connect, "INSERT INTO `users` (login, name, surname, email, password) VALUES (?,?,?,?,?)");
-    if ($stmt === false) {
-        $_SESSION['error']['saveData'] = "Ошибка подготовки SQL выражения";
-        header('Location: register.php');
-        die();
-    }
-    if (mysqli_stmt_bind_param($stmt, 'sssss', $arrAll['data']['Login'], $arrAll['data']['Name'], $arrAll['data']['Surname'], $arrAll['data']['Email'], $arrAll['data']['Password']) === false) {
-        $_SESSION['error']['saveData'] = "Ошибка привязки параметров подготовленного SQL выражения";
-        header('Location: register.php');
-        die();
-    }
-    if (mysqli_stmt_execute($stmt) === false) {
-        $_SESSION['error']['saveData'] = "Ошибка выполнения подготовленного SQL выражения";
-        header('Location: register.php');
-        die();
-    }
 
+    insertUserData($arrAll['data']);
     if (!empty($_FILES['avatar']['tmp_name'])) {
         if (move_uploaded_file($_FILES['avatar']['tmp_name'], $path) === false) {
             $_SESSION['error']['save'] = 'Ошибка сохранения аватара';
@@ -60,7 +39,7 @@ if (empty($arrAll["error"])) {
     die();
 }
 
-mysqli_close($connect);
+
 $_SESSION['message'] = "Регистрация завершена";
 header('Location: login.php');
 

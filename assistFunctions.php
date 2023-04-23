@@ -1,31 +1,16 @@
 <?php
 const MAX_UPLOAD_IMAGE_SIZE_BYTE = 10000;
 
-function isEmailExists(string $email): bool
-{
-    require "config.php";
-    $connect = mysqli_connect($host, $username, $password, $databaseName);
-    $sql = "SELECT `email` FROM `users` WHERE `email` = ?";
-    $result = mysqli_execute_query($connect, $sql, [$email]);
-    $arr = mysqli_fetch_assoc($result);
-    if ($arr !== NULL) {
-        return true;
-    }
-    return false;
-}
-
 
 function getValidatedDataChange(array $data, array $image): array
 {
     $arrData = [];
     $arrError = [];
-    require "config.php";
+    require_once "dataBase_functions.php";
     if (!empty($data['Login'])) {
-        $connect = mysqli_connect($host, $username, $password, $databaseName);
-        $sql = "SELECT `login` FROM `users` WHERE `login` = ?";
-        $result = mysqli_execute_query($connect, $sql, [$data['Login']]);
-        $arr = mysqli_fetch_assoc($result);
-        if ($arr !== NULL) {
+
+
+        if (isUserExists($data['Login']) !== false) {
             $arrError['Login'] = "This user is already exists";
         } else {
             $arrData['login'] = $data['Login'];
@@ -71,12 +56,10 @@ function getValidatedData(array $data, array $image): array
 {
     $arrData = [];
     $arrError = [];
-    require "config.php";
-    $connect = mysqli_connect($host, $username, $password, $databaseName);
-    $sql = "SELECT `login` FROM `users` WHERE `login` = ?";
-    $result = mysqli_execute_query($connect, $sql, [$data['Login']]);
-    $arr = mysqli_fetch_assoc($result);
-    if ($arr !== NULL) {
+    require_once "dataBase_functions.php";
+
+
+    if (isUserExists($data['Login'])) {
         $arrError['Login'] = "This user is already exists";
     } else {
         $arrData['Login'] = $data['Login'];
